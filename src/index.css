@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+
+  --color-ink-950: #06080f;
+  --color-ink-900: #0a0e1a;
+  --color-ink-800: #111626;
+  --color-ink-700: #1a2236;
+  --color-ink-600: #232d45;
+
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9ecff;
+  --color-brand-200: #b6d8ff;
+  --color-brand-300: #84bdff;
+  --color-brand-400: #4a98ff;
+  --color-brand-500: #1d75ff;
+  --color-brand-600: #0a5cf0;
+  --color-brand-700: #0948c4;
+  --color-brand-800: #0c3e9c;
+  --color-brand-900: #10377c;
+
+  --color-cyan-glow: #22e1ff;
+  --color-violet-glow: #8b5cff;
+
+  --color-success: #22d39a;
+  --color-warning: #ffc857;
+  --color-danger: #ff5c7c;
+
+  --radius-xl2: 1.25rem;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-scan: scan 3s ease-in-out infinite;
+  --animate-pulse-ring: pulseRing 2.4s ease-out infinite;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-22px) translateX(10px); }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+:root {
+  --bg: #f6f8fc;
+  --bg-elev: #ffffff;
+  --text: #0a0e1a;
+  --text-muted: #525e74;
+  --border: #e2e8f2;
+  --glass: rgba(255, 255, 255, 0.72);
+}
+
+.dark {
+  --bg: #06080f;
+  --bg-elev: #0a0e1a;
+  --text: #eaf1ff;
+  --text-muted: #8b9bbd;
+  --border: rgba(120, 150, 210, 0.14);
+  --glass: rgba(17, 22, 38, 0.6);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(34, 225, 255, 0.3);
+  color: inherit;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1d75ff, #22e1ff);
+  border-radius: 10px;
+}
+
+.font-display { font-family: var(--font-display); }
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--border);
+}
+
+.gradient-text {
+  background: linear-gradient(110deg, #4a98ff 0%, #22e1ff 50%, #8b5cff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(74,152,255,0.6), rgba(34,225,255,0.4), rgba(139,92,255,0.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.btn-glow:hover::after { transform: translateX(120%); }
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(74,152,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,152,255,0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.glow-cyan { box-shadow: 0 0 40px -8px rgba(34, 225, 255, 0.5); }
+.glow-blue { box-shadow: 0 0 40px -8px rgba(29, 117, 255, 0.5); }
+.glow-violet { box-shadow: 0 0 40px -8px rgba(139, 92, 255, 0.5); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
