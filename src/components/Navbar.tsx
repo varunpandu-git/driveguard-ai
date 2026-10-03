@@ -31,7 +31,7 @@ export default function Navbar() {
             <Activity className="h-5 w-5 text-white" strokeWidth={2.5} />
           </span>
           <span className="font-display text-lg font-bold tracking-tight">
-            Edge<span className="gradient-text">AI</span>
+            DriveGuard <span className="text-blue-600">AI</span>
           </span>
         </Link>
 
