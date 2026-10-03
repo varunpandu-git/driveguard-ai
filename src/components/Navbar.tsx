@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { Menu, X, Activity } from 'lucide-react';
+import { Menu, X, CarFront, Settings, Circle } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 const links = [
@@ -19,64 +19,54 @@ export default function Navbar() {
   const loc = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/90 bg-white/95 shadow-sm backdrop-blur-xl">
       <motion.nav
-        initial={{ y: -80 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mx-auto mt-3 flex max-w-7xl items-center justify-between gap-4 rounded-2xl glass px-4 py-3 md:px-6"
+        initial={{ y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35 }}
+        className="flex min-h-[76px] w-full items-center justify-between gap-5 px-5 sm:px-8 lg:px-10"
       >
-        <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-cyan-glow glow-blue">
-            <Activity className="h-5 w-5 text-white" strokeWidth={2.5} />
+        <Link to="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-md shadow-blue-600/20">
+            <CarFront className="h-7 w-7" strokeWidth={2.2} />
           </span>
-          <span className="font-display text-lg font-bold tracking-tight">
-            DriveGuard <span className="text-blue-600">AI</span>
+          <span className="flex flex-col">
+            <span className="font-display text-xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-2xl">
+              DriveGuard <span className="text-blue-600">AI</span>
+            </span>
+            <span className="mt-1 hidden text-xs font-medium tracking-wide text-slate-500 sm:block">
+              Safer Drivers <span className="mx-1 text-blue-500">•</span> Safer Roads
+            </span>
           </span>
         </Link>
 
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden items-center gap-1 xl:flex">
           {links.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               className={({ isActive }) =>
-                `relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-                  isActive ? 'text-cyan-glow' : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                `rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+                  isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'
                 }`
               }
             >
-              {({ isActive }) => (
-                <>
-                  {l.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 -z-10 rounded-lg bg-brand-500/10 ring-1 ring-brand-400/30"
-                    />
-                  )}
-                </>
-              )}
+              {l.label}
             </NavLink>
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link
-            to="/login"
-            className="hidden rounded-xl px-4 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text)] sm:block"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/register"
-            className="btn-glow hidden rounded-xl bg-gradient-to-r from-brand-500 to-cyan-glow px-4 py-2 text-sm font-semibold text-white sm:block"
-          >
-            Get Started
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <div className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 sm:flex">
+            <Circle className="h-2.5 w-2.5 fill-emerald-500 text-emerald-500" />
+            <span className="text-sm font-semibold text-emerald-700">System Online</span>
+          </div>
+          <Link to="/technology" aria-label="Settings and AI technology" title="Settings" className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+            <Settings className="h-5 w-5" />
           </Link>
           <ThemeToggle />
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-xl glass lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 lg:hidden"
             onClick={() => setOpen((o) => !o)}
             aria-label="Toggle menu"
           >
@@ -91,7 +81,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mx-auto mt-2 max-w-7xl overflow-hidden rounded-2xl glass px-4 py-2 lg:hidden"
+            className="overflow-hidden border-t border-slate-100 bg-white px-5 py-3 shadow-lg lg:hidden"
           >
             {links.map((l) => (
               <NavLink
@@ -99,17 +89,17 @@ export default function Navbar() {
                 to={l.to}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    isActive ? 'text-cyan-glow bg-brand-500/10' : 'text-[var(--text-muted)]'
+                  `block rounded-xl px-3 py-3 text-sm font-semibold ${
+                    isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'
                   }`
                 }
               >
                 {l.label}
               </NavLink>
             ))}
-            <div className="my-2 h-px bg-[var(--border)]" />
-            <Link to="/login" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm text-[var(--text-muted)]">Sign in</Link>
-            <Link to="/register" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-cyan-glow">Get Started</Link>
+            <div className="mt-2 flex items-center gap-2 px-3 py-2 text-sm font-semibold text-emerald-700 sm:hidden">
+              <Circle className="h-2.5 w-2.5 fill-emerald-500 text-emerald-500" /> System Online
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
