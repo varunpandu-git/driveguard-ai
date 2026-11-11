@@ -243,7 +243,7 @@ export default function AdminDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead><tr className="text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                    <th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4">Email / Account ID</th><th className="pb-3 pr-4">Role</th><th className="pb-3 pr-4">Registered</th><th className="pb-3">Last sign in</th>
+                    <th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4">Email</th><th className="pb-3 pr-4">Role</th><th className="pb-3 pr-4">Registered</th><th className="pb-3">Last sign in</th>
                   </tr></thead>
                   <tbody>
                     {userAccounts.map((account) => (
