@@ -249,7 +249,7 @@ export default function AdminDashboard() {
                     {userAccounts.map((account) => (
                       <tr key={account.id} className="border-t border-[var(--border)]">
                         <td className="py-3 pr-4 font-medium">{account.full_name || '—'}</td>
-                        <td className="py-3 pr-4 text-[var(--text-muted)]">{account.id}</td>
+                        <td className="py-3 pr-4 text-[var(--text-muted)]">{account.email || '—'}</td>
                         <td className="py-3 pr-4"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${account.role === 'admin' ? 'bg-success/15 text-success' : 'bg-brand-500/10 text-cyan-glow'}`}>{account.role}</span></td>
                         <td className="py-3 pr-4 text-[var(--text-muted)]">{new Date(account.created_at).toLocaleDateString()}</td>
                         <td className="py-3 text-[var(--text-muted)]">{account.last_sign_in_at ? new Date(account.last_sign_in_at).toLocaleString() : 'Not yet'}</td>
