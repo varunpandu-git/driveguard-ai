@@ -20,7 +20,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Suspense fallback={<Loader label="Loading Edge-AI" />}>
             <Routes>
               <Route element={<Layout />}>
