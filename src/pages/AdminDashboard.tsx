@@ -7,7 +7,9 @@ import {
 } from 'lucide-react';
 import CameraScan from '@/components/CameraScan';
 import { useAuth } from '@/context/AuthContext';
-import { supabase, type ContactMessage } from '@/lib/supabase';
+import { supabase, type ContactMessage, type Profile } from '@/lib/supabase';
+
+const ADMIN_EMAIL = 'varunpandu166@gmail.com';
 
 const nav = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
@@ -45,19 +47,29 @@ export default function AdminDashboard() {
   const [section, setSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [userAccounts, setUserAccounts] = useState<Profile[]>([]);
+  const [usersError, setUsersError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { profile, signOut } = useAuth();
+  const { profile, user, loading, signOut } = useAuth();
 
   useEffect(() => {
+    if (loading) return;
+    if (!user) { navigate('/login'); return; }
+    if (user.email?.toLowerCase() !== ADMIN_EMAIL) { navigate('/dashboard'); return; }
     (async () => {
-      const { data } = await supabase
-        .from('contact_messages')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      setMessages(data ?? []);
+      const [{ data: messageData }, { data: profileData, error }] = await Promise.all([
+        supabase.from('contact_messages').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+      ]);
+      setMessages(messageData ?? []);
+      if (error) setUsersError(error.message);
+      else setUserAccounts((profileData ?? []) as Profile[]);
     })();
-  }, []);
+  }, [loading, user, navigate]);
+
+  if (loading || !user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+    return <div className="mx-auto max-w-7xl px-6 py-20 text-center text-[var(--text-muted)]">Checking admin access…</div>;
+  }
 
   async function handleSignOut() {
     await signOut();
@@ -214,6 +226,43 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {section === 'users' && (
+          <div className="rounded-2xl glass p-6">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-lg font-semibold">Registered Users</h2>
+                <p className="text-sm text-[var(--text-muted)]">Accounts registered on DriveGuard AI</p>
+              </div>
+              <span className="rounded-full bg-brand-500/10 px-3 py-1.5 text-sm font-semibold text-cyan-glow">{userAccounts.length} accounts</span>
+            </div>
+            {usersError ? (
+              <p className="rounded-xl bg-danger/10 p-4 text-sm text-danger">{usersError}. Apply the new Supabase migration to enable the admin user list.</p>
+            ) : userAccounts.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[var(--text-muted)]">No registered accounts found yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead><tr className="text-xs uppercase tracking-wider text-[var(--text-muted)]">
+                    <th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4">Email / Account ID</th><th className="pb-3 pr-4">Role</th><th className="pb-3 pr-4">Registered</th><th className="pb-3">Last sign in</th>
+                  </tr></thead>
+                  <tbody>
+                    {userAccounts.map((account) => (
+                      <tr key={account.id} className="border-t border-[var(--border)]">
+                        <td className="py-3 pr-4 font-medium">{account.full_name || '—'}</td>
+                        <td className="py-3 pr-4 text-[var(--text-muted)]">{account.id}</td>
+                        <td className="py-3 pr-4"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${account.role === 'admin' ? 'bg-success/15 text-success' : 'bg-brand-500/10 text-cyan-glow'}`}>{account.role}</span></td>
+                        <td className="py-3 pr-4 text-[var(--text-muted)]">{new Date(account.created_at).toLocaleDateString()}</td>
+                        <td className="py-3 text-[var(--text-muted)]">{account.last_sign_in_at ? new Date(account.last_sign_in_at).toLocaleString() : 'Not yet'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <p className="mt-4 text-xs text-[var(--text-muted)]">Passwords are never shown or stored in this dashboard.</p>
+          </div>
+        )}
+
         {section === 'reports' && (
           <div className="rounded-2xl glass p-6">
             <h2 className="mb-4 font-display text-lg font-semibold">Contact Messages</h2>
@@ -239,7 +288,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {section !== 'dashboard' && section !== 'reports' && (
+        {section !== 'dashboard' && section !== 'reports' && section !== 'users' && (
           <div className="flex min-h-[50vh] flex-col items-center justify-center rounded-2xl glass p-10 text-center">
             <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-cyan-glow">
               {nav.find((n) => n.id === section)?.icon && (() => { const Icon = nav.find((n) => n.id === section)!.icon; return <Icon className="h-8 w-8 text-white" />; })()}
