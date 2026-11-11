@@ -53,7 +53,7 @@ export default function Login() {
           <label className="flex items-center gap-2 text-[var(--text-muted)]">
             <input type="checkbox" className="h-4 w-4 rounded border-[var(--border)] accent-cyan-glow" /> Remember me
           </label>
-          <Link to="/forgot-password" className="font-medium text-cyan-glow hover:underline">Forgot password?</Link>
+          <Link to="/login" className="font-medium text-cyan-glow hover:underline">Forgot password?</Link>
         </div>
         {error && (
           <div className="flex items-center gap-2 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger ring-1 ring-danger/30">
