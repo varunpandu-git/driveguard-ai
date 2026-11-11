@@ -4,6 +4,8 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import AuthLayout from '@/components/AuthLayout';
 import { useAuth } from '@/context/AuthContext';
 
+const ADMIN_EMAIL = 'varunpandu166@gmail.com';
+
 export default function Login() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
@@ -17,13 +19,14 @@ export default function Login() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const { error } = await signIn(email, password);
+    const normalizedEmail = email.trim().toLowerCase();
+    const result = await signIn(normalizedEmail, password);
     setBusy(false);
-    if (error) {
-      setError(error);
+    if (result.error) {
+      setError(result.error);
       return;
     }
-    navigate('/admin');
+    navigate(normalizedEmail === ADMIN_EMAIL ? '/admin' : '/dashboard');
   }
 
   return (
@@ -36,7 +39,6 @@ export default function Login() {
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="w-full rounded-xl border border-[var(--border)] bg-transparent py-3 pl-11 pr-4 text-sm outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow/40" />
           </div>
         </div>
-
         <div>
           <label className="mb-1.5 block text-sm font-medium text-[var(--text-muted)]">Password</label>
           <div className="relative">
@@ -47,24 +49,20 @@ export default function Login() {
             </button>
           </div>
         </div>
-
         <div className="flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 text-[var(--text-muted)]">
             <input type="checkbox" className="h-4 w-4 rounded border-[var(--border)] accent-cyan-glow" /> Remember me
           </label>
-          <a href="#" className="font-medium text-cyan-glow hover:underline">Forgot password?</a>
+          <Link to="/forgot-password" className="font-medium text-cyan-glow hover:underline">Forgot password?</Link>
         </div>
-
         {error && (
           <div className="flex items-center gap-2 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger ring-1 ring-danger/30">
             <AlertCircle className="h-4 w-4 shrink-0" /> {error}
           </div>
         )}
-
         <button type="submit" disabled={busy} className="btn-glow flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-glow py-3.5 font-semibold text-white glow-blue disabled:opacity-60">
           {busy ? 'Signing in…' : (<>Sign in <ArrowRight className="h-4.5 w-4.5" /></>)}
         </button>
-
         <p className="text-center text-sm text-[var(--text-muted)]">
           Don't have an account? <Link to="/register" className="font-medium text-cyan-glow hover:underline">Create one</Link>
         </p>
