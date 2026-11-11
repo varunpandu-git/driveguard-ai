@@ -14,8 +14,10 @@ export type Profile = {
   id: string;
   full_name: string;
   phone: string;
+  email: string;
   role: string;
   created_at: string;
+  last_sign_in_at: string | null;
 };
 
 export type Trip = {
