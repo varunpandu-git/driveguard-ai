@@ -24,7 +24,7 @@ export default function App() {
           <Suspense fallback={<Loader label="Loading Edge-AI" />}>
             <Routes>
               <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Login />} />
                 <Route path="/dashboard" element={<LiveDashboard />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/reports" element={<Reports />} />
@@ -34,7 +34,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="*" element={<Home />} />
+                <Route path="*" element={<Login />} />
               </Route>
             </Routes>
           </Suspense>
