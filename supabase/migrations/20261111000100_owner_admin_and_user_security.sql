@@ -2,7 +2,8 @@
 -- Run this migration in Supabase SQL Editor before enabling the new login flow.
 
 ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS last_sign_in_at timestamptz;
+  ADD COLUMN IF NOT EXISTS last_sign_in_at timestamptz,
+  ADD COLUMN IF NOT EXISTS email text;
 
 CREATE OR REPLACE FUNCTION public.is_driveguard_admin()
 RETURNS boolean
@@ -23,16 +24,18 @@ SECURITY DEFINER
 SET search_path = public, auth
 AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, phone, role)
+  INSERT INTO public.profiles (id, full_name, phone, email, role)
   VALUES (
     NEW.id,
     coalesce(NEW.raw_user_meta_data ->> 'full_name', ''),
     coalesce(NEW.raw_user_meta_data ->> 'phone', ''),
+    lower(coalesce(NEW.email, '')),
     CASE WHEN lower(coalesce(NEW.email, '')) = 'varunpandu166@gmail.com' THEN 'admin' ELSE 'user' END
   )
   ON CONFLICT (id) DO UPDATE SET
     full_name = EXCLUDED.full_name,
     phone = EXCLUDED.phone,
+    email = EXCLUDED.email,
     role = CASE WHEN lower(coalesce(NEW.email, '')) = 'varunpandu166@gmail.com' THEN 'admin' ELSE 'user' END;
   RETURN NEW;
 END;
@@ -44,14 +47,16 @@ AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION public.handle_new_driveguard_user();
 
 -- Backfill profiles for existing auth users and promote only the configured email.
-INSERT INTO public.profiles (id, full_name, phone, role)
+INSERT INTO public.profiles (id, full_name, phone, email, role)
 SELECT
   u.id,
   coalesce(u.raw_user_meta_data ->> 'full_name', ''),
   coalesce(u.raw_user_meta_data ->> 'phone', ''),
+  lower(coalesce(u.email, '')),
   CASE WHEN lower(coalesce(u.email, '')) = 'varunpandu166@gmail.com' THEN 'admin' ELSE 'user' END
 FROM auth.users u
 ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
   role = CASE WHEN lower(coalesce((SELECT email FROM auth.users WHERE id = EXCLUDED.id), '')) = 'varunpandu166@gmail.com' THEN 'admin' ELSE 'user' END;
 
 -- Profiles: users can see/edit their own row; only the owner admin can list all.
